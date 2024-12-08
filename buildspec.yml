@@ -3,27 +3,22 @@ phases:
   install:
     runtime-versions:
       python: 3.12.4
-    commands:
-      - echo "Installing Docker CLI"
-      - apt-get update && apt-get install -y docker.io
   pre_build:
     commands:
-      - echo "Logging in to Amazon ECR"
-      - $(aws ecr get-login-password --region $AWS_REGION | docker login
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login
         --username AWS --password-stdin
-        $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com)
+        $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
   build:
     commands:
-      - echo "Building Docker image"
-      - docker build -t PerceptionHub-app .
-      - docker tag PerceptionHub-app:latest
-        $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/PerceptionHub-app:latest
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
+      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG
+        $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
   post_build:
     commands:
-      - echo "Pushing Docker image to ECR"
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
       - docker push
-        $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/PerceptionHub-app:latest
-artifacts:
-  files:
-    - app.py
-    - dockerfile
+        $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
