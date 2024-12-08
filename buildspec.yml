@@ -1,26 +1,29 @@
 version: 0.2
-
 phases:
   install:
     runtime-versions:
-      python: 3.10
+      python: 3.12.4
     commands:
       - echo "Installing Docker CLI"
       - apt-get update && apt-get install -y docker.io
   pre_build:
     commands:
       - echo "Logging in to Amazon ECR"
-      - $(aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com)
+      - $(aws ecr get-login-password --region $AWS_REGION | docker login
+        --username AWS --password-stdin
+        $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com)
   build:
     commands:
       - echo "Building Docker image"
-      - docker build -t streamlit-app .
-      - docker tag streamlit-app:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/streamlit-app:latest
+      - docker build -t PerceptionHub-app .
+      - docker tag PerceptionHub-app:latest
+        $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/PerceptionHub-app:latest
   post_build:
     commands:
       - echo "Pushing Docker image to ECR"
-      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/streamlit-app:latest
+      - docker push
+        $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/PerceptionHub-app:latest
 artifacts:
   files:
     - app.py
-    - Dockerfile
+    - dockerfile
