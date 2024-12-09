@@ -26,4 +26,4 @@ phases:
         }' > BuildArtifact.json
 artifacts:
   files:
-    - BuildArtifact.json
+    - imagedefinitions.json
