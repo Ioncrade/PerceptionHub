@@ -10,7 +10,7 @@ import os
 # News API Key
 load_dotenv()
 
-API_KEY ='79e3842815ea48f9ae7cb26293aeb48c'
+API_KEY = os.getenv("NEWS_API_KEY")
 if not API_KEY:
     raise ValueError("API key not found! Make sure it's set in the .env file.")
 
